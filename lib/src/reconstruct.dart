@@ -1,5 +1,4 @@
-import 'package:ret/write-set-tokens.dart';
-
+import './write-set-tokens.dart';
 import './types/tokens.dart';
 
 String _reduceStack(List<Token> stack) => stack.map<String>(reconstruct).join();

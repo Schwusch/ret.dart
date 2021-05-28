@@ -1,6 +1,6 @@
-import 'package:ret/sets.dart';
-import 'package:ret/types/tokens.dart';
-import 'package:ret/util.dart';
+import 'package:ret/ret.dart';
+import 'package:ret/src/sets.dart';
+import 'package:ret/src/util.dart';
 import 'package:test/test.dart';
 
 void main() {

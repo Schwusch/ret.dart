@@ -1,6 +1,6 @@
-import 'package:ret/sets.dart';
-import 'package:ret/types/set-lookup.dart';
-import 'package:ret/types/tokens.dart';
+import 'package:ret/src/sets.dart';
+import './types/set-lookup.dart';
+import './types/tokens.dart';
 
 SetLookup _setToLookup(List<SetToken> tokens) {
   var lookup = <String, bool>{};

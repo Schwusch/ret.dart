@@ -1,7 +1,7 @@
 name: ret
 description: Tokenizes a string that represents a regular expression.
 version: 0.0.1
-homepage: https://github.com/Schwusch/ret
+homepage: https://github.com/Schwusch/ret.dart
 
 environment:
   sdk: '>=2.13.0 <3.0.0'

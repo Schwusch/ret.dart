@@ -1,4 +1,4 @@
-import 'package:ret/types/tokens.dart';
+import './types/tokens.dart';
 
 const _INTS = [Range(from: 48, to: 57)];
 

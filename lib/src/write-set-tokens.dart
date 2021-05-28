@@ -1,7 +1,7 @@
-import 'package:ret/sets-lookup.dart';
-import 'package:ret/types/set-lookup.dart';
+import './sets-lookup.dart';
+import './types/set-lookup.dart';
 
-import 'package:ret/types/tokens.dart';
+import './types/tokens.dart';
 
 /// Takes character code and returns character to be displayed in a set
 /// @param charCode Character code of set element

@@ -1,5 +1,5 @@
 import 'package:ret/ret.dart';
-import 'package:ret/sets.dart';
+import 'package:ret/src/sets.dart';
 import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
 
@@ -10,38 +10,36 @@ List<Char> charStr(String str) => str.split('').map(char).toList();
 void main() {
   group('Regexp Tokenizer', () {
     group('No special characters', () {
-      final t = tokenizer('walnuts');
-
       test('List of char tokens', () {
-        expect(t, equals(Root(stack: charStr('walnuts'))));
+        expect(
+          tokenizer('walnuts'),
+          equals(Root(stack: charStr('walnuts'))),
+        );
       });
     });
 
     group('Positionals', () {
       group(r'^ and $ in one liner', () {
-        final t = tokenizer(r'^yes$');
-
         test('Positionals at beginning and end', () {
           expect(
-              t,
-              equals(
-                Root(
-                  stack: [
-                    Position('^'),
-                    ...charStr('yes'),
-                    Position(r'$'),
-                  ],
-                ),
-              ));
+            tokenizer(r'^yes$'),
+            equals(
+              Root(
+                stack: [
+                  Position('^'),
+                  ...charStr('yes'),
+                  Position(r'$'),
+                ],
+              ),
+            ),
+          );
         });
       });
 
       group('\\b and \\B', () {
-        final t = tokenizer('\\bbeginning\\B');
-
         test('Word boundary at beginning', () {
           expect(
-            t,
+            tokenizer('\\bbeginning\\B'),
             Root(
               stack: [
                 Position('b'),
@@ -87,11 +85,9 @@ void main() {
     });
 
     group('Custom sets', () {
-      final t = tokenizer('[\$!a-z123] thing [^0-9]');
-
       test('Class contains all characters and range', () {
         expect(
-          t,
+          tokenizer('[\$!a-z123] thing [^0-9]'),
           equals(Root(
             stack: [
               Set(
@@ -121,15 +117,13 @@ void main() {
       });
 
       group('Whitespace characters', () {
-        final t = tokenizer('[\t\r\n\u2028\u2029 ]');
-
         test('Class contains some whitespace characters (not included in .)',
             () {
           final LINE_SEPARATOR = '\u2028';
           final PAGE_SEPARATOR = '\u2029';
 
           expect(
-              t,
+              tokenizer('[\t\r\n\u2028\u2029 ]'),
               equals(
                 Root(stack: [
                   Set(
@@ -147,11 +141,9 @@ void main() {
       });
 
       group('Two sets in a row with dash in between', () {
-        final t = tokenizer('[01]-[ab]');
-
         test('Contains both classes and no range', () {
           expect(
-            t,
+            tokenizer('[01]-[ab]'),
             equals(
               Root(
                 stack: [
@@ -166,38 +158,37 @@ void main() {
       });
 
       group('| (Pipe)', () {
-        final t = tokenizer('foo|bar|za');
-
         test('Returns root object with options', () {
           expect(
-              t,
-              equals(Root(
+            tokenizer('foo|bar|za'),
+            equals(
+              Root(
                 stack: null,
                 options: [charStr('foo'), charStr('bar'), charStr('za')],
-              )));
+              ),
+            ),
+          );
         });
       });
 
       group('Group', () {
         group('with no special characters', () {
-          final t = tokenizer('hey (there)');
-
           test('Token list contains group token', () {
             expect(
-                t,
-                Root(
-                  stack: [
-                    ...charStr('hey '),
-                    Group(remember: true, stack: charStr('there')),
-                  ],
-                ));
+              tokenizer('hey (there)'),
+              Root(
+                stack: [
+                  ...charStr('hey '),
+                  Group(remember: true, stack: charStr('there')),
+                ],
+              ),
+            );
           });
-          group('that is not remembered', () {
-            final t = tokenizer('(?:loner)');
 
+          group('that is not remembered', () {
             test('Remember is false on the group object', () {
               expect(
-                t,
+                tokenizer('(?:loner)'),
                 equals(
                   Root(
                     stack: [
@@ -210,44 +201,49 @@ void main() {
           });
 
           group('matched previous clause if not followed by this', () {
-            final t = tokenizer('what(?!ever)');
-
             test('Returns a group', () {
               expect(
-                  t,
-                  equals(Root(stack: [
-                    ...charStr('what'),
-                    Group(
-                      remember: false,
-                      notFollowedBy: true,
-                      stack: charStr('ever'),
-                    )
-                  ])));
+                tokenizer('what(?!ever)'),
+                equals(
+                  Root(
+                    stack: [
+                      ...charStr('what'),
+                      Group(
+                        remember: false,
+                        notFollowedBy: true,
+                        stack: charStr('ever'),
+                      )
+                    ],
+                  ),
+                ),
+              );
             });
           });
         });
 
         group('matched next clause', () {
-          final t = tokenizer('hello(?= there)');
-
           test('Returns a group', () {
             expect(
-                t,
-                equals(Root(stack: [
-                  ...charStr('hello'),
-                  Group(
-                      remember: false,
-                      followedBy: true,
-                      stack: charStr(' there'))
-                ])));
+              tokenizer('hello(?= there)'),
+              equals(
+                Root(
+                  stack: [
+                    ...charStr('hello'),
+                    Group(
+                        remember: false,
+                        followedBy: true,
+                        stack: charStr(' there'))
+                  ],
+                ),
+              ),
+            );
           });
         });
-        group('with subgroup', () {
-          final t = tokenizer('a(b(c|(?:d))fg) @_@');
 
+        group('with subgroup', () {
           test('groups within groups', () {
             expect(
-                t,
+                tokenizer('a(b(c|(?:d))fg) @_@'),
                 Root(stack: [
                   char('a'),
                   Group(remember: true, stack: [
@@ -267,10 +263,8 @@ void main() {
       group('Custom repetition with', () {
         group('exact amount', () {
           test('Min and max are the same', () {
-            final t = tokenizer('(?:pika){2}');
-
             expect(
-              t,
+              tokenizer('(?:pika){2}'),
               equals(
                 Root(stack: [
                   Repetition(
@@ -287,10 +281,8 @@ void main() {
           });
 
           test('minimum amount only to infinity', () {
-            final t = tokenizer('NO{6,}');
-
             expect(
-              t,
+              tokenizer('NO{6,}'),
               equals(Root(
                 stack: [
                   char('N'),
@@ -301,7 +293,403 @@ void main() {
           });
 
           test('Min and max differ and min < max', () {
-            final t = tokenizer('pika\\.\\.\\. chu{3,20}!{1,2}');
+            expect(
+                tokenizer('pika\\.\\.\\. chu{3,20}!{1,2}'),
+                equals(Root(stack: [
+                  ...charStr('pika... ch'),
+                  Repetition(min: 3, max: 20, value: char('u')),
+                  Repetition(min: 1, max: 2, value: char('!')),
+                ])));
+          });
+
+          test('Brackets around a non-repetitional returns a non-repetitional',
+              () {
+            expect(
+              tokenizer('a{mustache}'),
+              equals(Root(stack: charStr('a{mustache}'))),
+            );
+          });
+        });
+
+        group('Predefined repetitional', () {
+          test('? (Optional) - Get back correct min and max', () {
+            expect(
+              tokenizer('hey(?: you)?'),
+              equals(
+                Root(
+                  stack: [
+                    ...charStr('hey'),
+                    Repetition(
+                      min: 0,
+                      max: 1,
+                      value: Group(
+                        remember: false,
+                        stack: charStr(' you'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          });
+
+          test('+ (At least one) - Correct min and max', () {
+            expect(
+              tokenizer('(no )+'),
+              equals(
+                Root(
+                  stack: [
+                    Repetition(
+                        min: 1,
+                        max: -1,
+                        value: Group(remember: true, stack: charStr('no '))),
+                  ],
+                ),
+              ),
+            );
+          });
+
+          test('* (Any amount) - 0 to Infinity', () {
+            expect(
+              tokenizer('XF*D'),
+              equals(
+                Root(
+                  stack: [
+                    char('X'),
+                    Repetition(min: 0, max: -1, value: char('F')),
+                    char('D'),
+                  ],
+                ),
+              ),
+            );
+          });
+        });
+
+        group('Reference', () {
+          test('Reference a group', () {
+            expect(
+              tokenizer('<(\\w+)>\\w*<\\1>'),
+              equals(
+                Root(
+                  stack: [
+                    char('<'),
+                    Group(
+                      remember: true,
+                      stack: [
+                        Repetition(min: 1, max: -1, value: words),
+                      ],
+                    ),
+                    char('>'),
+                    Repetition(min: 0, max: -1, value: words),
+                    char('<'),
+                    Reference(1),
+                    char('>'),
+                  ],
+                ),
+              ),
+            );
+          });
+        });
+
+        group('Range (in set) test cases', () {
+          group('Testing complex range cases', () {
+            test(
+              'token.from is a hyphen and the range is preceded by a single character [a\\--\\-]',
+              () {
+                expect(
+                  tokenizer('[a\\--\\-]'),
+                  equals(
+                    Root(
+                      stack: [
+                        Set(
+                          set: [
+                            Char(97),
+                            Range(from: 45, to: 45),
+                          ],
+                          not: false,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+
+            test(
+              'token.from is a hyphen and the range is preceded by a single character [a\\--\\/]',
+              () {
+                expect(
+                  tokenizer('[a\\--\\/]'),
+                  equals(
+                    Root(
+                      stack: [
+                        Set(
+                          set: [
+                            Char(97),
+                            Range(from: 45, to: 47),
+                          ],
+                          not: false,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+
+            test(
+              'token.from is a hyphen and the range is preceded by a single character [c\\--a]',
+              () {
+                expect(
+                  tokenizer('[c\\--a]'),
+                  equals(
+                    Root(
+                      stack: [
+                        Set(
+                          set: [
+                            Char(99),
+                            Range(from: 45, to: 97),
+                          ],
+                          not: false,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+
+            test(
+              'token.from is a hyphen and the range is preceded by a single character [\\-\\--\\-]',
+              () {
+                expect(
+                  tokenizer('[\\-\\--\\-]'),
+                  equals(
+                    Root(
+                      stack: [
+                        Set(
+                          set: [
+                            Char(45),
+                            Range(from: 45, to: 45),
+                          ],
+                          not: false,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+
+            test(
+              'token.from is a hyphen and the range is preceded by a predefined set [\\w\\--\\-]',
+              () {
+                expect(
+                  tokenizer('[\\w\\--\\-]'),
+                  equals(
+                    Root(
+                      stack: [
+                        Set(
+                          set: [
+                            Set(
+                              set: [
+                                Char(95),
+                                Range(from: 97, to: 122),
+                                Range(from: 65, to: 90),
+                                Range(from: 48, to: 57),
+                              ],
+                              not: false,
+                            ),
+                            Range(from: 45, to: 45),
+                          ],
+                          not: false,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+
+            test(
+              'token.from is a caret and the range is the first item of the set [9-\\^]',
+              () {
+                expect(
+                  tokenizer('[9-\\^]'),
+                  equals(
+                    Root(
+                      stack: [
+                        Set(
+                          set: [Range(from: 57, to: 94)],
+                          not: false,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+
+            test('token.to is a closing square bracket [2-\\]]', () {
+              expect(
+                tokenizer('[2-\\]]'),
+                equals(
+                  Root(
+                    stack: [
+                      Set(
+                        set: [Range(from: 50, to: 93)],
+                        not: false,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            });
+
+            test('token.to is a closing square bracket [\\]-\\^]', () {
+              expect(
+                tokenizer('[\\]-\\^]'),
+                equals(
+                  Root(
+                    stack: [
+                      Set(
+                        set: [Range(from: 93, to: 94)],
+                        not: false,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            });
+
+            test('token.to is a closing square bracket [[-\\]]', () {
+              expect(
+                tokenizer('[[-\\]]'),
+                equals(
+                  Root(
+                    stack: [
+                      Set(
+                        set: [Range(from: 91, to: 93)],
+                        not: false,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            });
+
+            test('token.to is a closing square bracket [[-]]', () {
+              expect(
+                tokenizer('[[-]]'),
+                equals(
+                  Root(
+                    stack: [
+                      Set(
+                        set: [Char(91), Char(45)],
+                        not: false,
+                      ),
+                      Char(93),
+                    ],
+                  ),
+                ),
+              );
+            });
+
+            test('token.from is a caret [\\^-_]', () {
+              expect(
+                tokenizer('[\\^-_]'),
+                equals(
+                  Root(
+                    stack: [
+                      Set(
+                        set: [Range(from: 94, to: 95)],
+                        not: false,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            });
+
+            test('token.from is a caret [\\^-^]', () {
+              expect(
+                tokenizer('[\\^-^]'),
+                equals(
+                  Root(
+                    stack: [
+                      Set(
+                        set: [Range(from: 94, to: 94)],
+                        not: false,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            });
+
+            test('token.from is a caret and set is negated [^\\^-_]', () {
+              expect(
+                tokenizer('[^\\^-_]'),
+                equals(
+                  Root(
+                    stack: [
+                      Set(
+                        set: [Range(from: 94, to: 95)],
+                        not: true,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            });
+
+            test('token.from is a caret [^\\^-^] and set is negated', () {
+              expect(
+                tokenizer('[^\\^-^]'),
+                equals(
+                  Root(
+                    stack: [
+                      Set(
+                        set: [Range(from: 94, to: 94)],
+                        not: true,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            });
+
+            test('Contains empty set', () {
+              expect(
+                tokenizer('[]'),
+                equals(
+                  Root(
+                    stack: [
+                      Set(
+                        set: [],
+                        not: false,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            });
+
+            test('Contains empty negated set', () {
+              expect(
+                tokenizer('[^]'),
+                equals(
+                  Root(
+                    stack: [
+                      Set(
+                        set: [],
+                        not: true,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            });
           });
         });
       });

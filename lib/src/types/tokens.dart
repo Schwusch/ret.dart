@@ -15,6 +15,9 @@ class ValueType<T> extends Token with EquatableMixin {
 
   @override
   List<Object?> get props => [value];
+
+  @override
+  bool get stringify => true;
 }
 
 class Token extends Tokens {
@@ -49,6 +52,9 @@ class Root extends Tokens with EquatableMixin implements RootOrGroup {
 
   @override
   List<Object?> get props => [stack, options, flags];
+
+  @override
+  bool get stringify => true;
 }
 
 class Group extends Token with EquatableMixin implements RootOrGroup {
@@ -79,6 +85,9 @@ class Group extends Token with EquatableMixin implements RootOrGroup {
         notFollowedBy,
         lookBehind,
       ];
+
+  @override
+  bool get stringify => true;
 }
 
 class Set extends Token with EquatableMixin implements SetToken {
@@ -92,6 +101,9 @@ class Set extends Token with EquatableMixin implements SetToken {
 
   @override
   List<Object?> get props => [set, not];
+
+  @override
+  bool get stringify => true;
 }
 
 class Range extends Token with EquatableMixin implements SetToken {
@@ -105,6 +117,9 @@ class Range extends Token with EquatableMixin implements SetToken {
 
   @override
   List<Object?> get props => [from, to];
+
+  @override
+  bool get stringify => true;
 }
 
 class Repetition extends Token with EquatableMixin {
@@ -120,6 +135,9 @@ class Repetition extends Token with EquatableMixin {
 
   @override
   List<Object?> get props => [min, max, value];
+
+  @override
+  bool get stringify => true;
 }
 
 class Position extends ValueType<String> {

@@ -1,6 +1,6 @@
-import 'package:ret/sets.dart';
-import 'package:ret/types/tokens.dart';
-import 'package:ret/util.dart';
+import './sets.dart';
+import './types/tokens.dart';
+import './util.dart';
 
 Root tokenizer(String regexpStr) {
   var i = 0;
@@ -57,7 +57,7 @@ Root tokenizer(String regexpStr) {
           default:
             // Check if c is integer.
             // In which case it's a reference.
-            if (c.contains(RegExp('\d'))) {
+            if (c.contains(RegExp(r'\d'))) {
               last.add(Reference(int.parse(c)));
             } else {
               // Escaped character.
@@ -174,7 +174,7 @@ Root tokenizer(String regexpStr) {
       // This design is chosen because there could be more than
       // one repetition symbols in a regex i.e. 'a?+{2,3}'.
       case '{':
-        var rs = RegExp('^(\d+)(,(\d+)?)?\}').firstMatch(str.substring(i));
+        var rs = RegExp(r'^(\d+)(,(\d+)?)?\}').firstMatch(str.substring(i));
         int min;
         int max;
         if (rs != null) {

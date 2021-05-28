@@ -1,6 +1,6 @@
-import 'package:ret/sets.dart';
+import './sets.dart';
 
-import 'types/tokens.dart';
+import './types/tokens.dart';
 
 const CTRL = '@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^ ?';
 

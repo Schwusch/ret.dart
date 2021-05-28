@@ -1,3 +1,3 @@
-export './types/tokens.dart';
-export './tokenizer.dart';
-export './reconstruct.dart';
+export 'src/types/tokens.dart';
+export 'src/tokenizer.dart';
+export 'src/reconstruct.dart';
