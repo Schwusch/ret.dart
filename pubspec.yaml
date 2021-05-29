@@ -1,6 +1,6 @@
 name: ret
-description: Tokenizes a string that represents a regular expression.
-version: 0.0.1
+description: Tokenizes a string that represents a regular expression. Dart port of ret.js
+version: 0.0.2
 homepage: https://github.com/Schwusch/ret.dart
 
 environment:

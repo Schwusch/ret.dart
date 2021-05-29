@@ -2,6 +2,7 @@ import './sets.dart';
 import './types/tokens.dart';
 import './util.dart';
 
+/// Tokenizes a regular expression (that is currently a string)
 Root tokenizer(String regexpStr) {
   var i = 0;
   String c;

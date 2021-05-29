@@ -1,17 +1,18 @@
 import 'package:equatable/equatable.dart';
 
+/// A collection of the various token types exported by ret.
 enum Types { ROOT, GROUP, POSITION, SET, RANGE, REPETITION, REFERENCE, CHAR }
 
-class Base {
+class _Base {
   final Types type;
 
-  const Base(this.type);
+  const _Base(this.type);
 }
 
-class ValueType<T> extends Token with EquatableMixin {
+class _ValueType<T> extends Token with EquatableMixin {
   final T value;
 
-  const ValueType(Types type, this.value) : super(type);
+  const _ValueType(Types type, this.value) : super(type);
 
   @override
   List<Object?> get props => [value];
@@ -24,7 +25,7 @@ class Token extends Tokens {
   const Token(Types type) : super(type);
 }
 
-class Tokens extends Base {
+class Tokens extends _Base {
   const Tokens(Types type) : super(type);
 }
 
@@ -140,16 +141,16 @@ class Repetition extends Token with EquatableMixin {
   bool get stringify => true;
 }
 
-class Position extends ValueType<String> {
+class Position extends _ValueType<String> {
   Position(String value) : super(Types.POSITION, value) {
     assert(['\$', '^', 'b', 'B'].contains(value));
   }
 }
 
-class Reference extends ValueType<int> {
+class Reference extends _ValueType<int> {
   const Reference(int value) : super(Types.REFERENCE, value);
 }
 
-class Char extends ValueType<int> implements SetToken {
+class Char extends _ValueType<int> implements SetToken {
   const Char(int value) : super(Types.CHAR, value);
 }

@@ -3,7 +3,7 @@ import './types/tokens.dart';
 
 String _reduceStack(List<Token> stack) => stack.map<String>(reconstruct).join();
 
-String createAlternate(RootOrGroup token) {
+String _createAlternate(RootOrGroup token) {
   if (token.options != null) {
     return token.options!.map(_reduceStack).join('|');
   } else if (token.stack != null) {
@@ -13,11 +13,13 @@ String createAlternate(RootOrGroup token) {
   }
 }
 
+/// Accepts an any token and returns, as a string, the component of the
+/// regular expression that is associated with that token.
 String reconstruct(Tokens token) {
   switch (token.type) {
     case Types.ROOT:
       token as Root;
-      return createAlternate(token);
+      return _createAlternate(token);
     case Types.GROUP:
       token as Group;
       final prefix = token.remember
@@ -27,7 +29,7 @@ String reconstruct(Tokens token) {
               : token.notFollowedBy ?? false
                   ? '?!'
                   : '?:';
-      return '($prefix${createAlternate(token)})';
+      return '($prefix${_createAlternate(token)})';
     case Types.POSITION:
       token as Position;
       if (token.value == '^' || token.value == r'$') {
